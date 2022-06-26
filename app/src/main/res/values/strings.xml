@@ -1,0 +1,24 @@
+<resources>
+    <!-- Strings used for Connection -->
+    <string name="app_name">Padec_Device_Info</string>
+    <string name="uri">Server URL</string>
+    <string name="input_uri">Input Server URL</string>
+    <string name="client_id">Client ID</string>
+    <string name="input_client_id">Input Client ID</string>
+    <string name="user_name">User Name</string>
+    <string name="input_user_name">Input User Name</string>
+    <string name="password">Password</string>
+    <string name="input_password">Input Password</string>
+    <string name="button_connect">Connect</string>
+
+    <!-- Strings used for fragments for Sub/Pub -->
+    <string name="sub_topic">Topic</string>
+    <string name="input_sub_topic">Input Topic For Subscription</string>
+    <string name="button_sub">Subscribe</string>
+    <string name="button_unsub">Unsubscribe</string>
+    <string name="pub_topic">Topic For Publish</string>
+    <string name="message">Message</string>
+    <string name="input_message">Input Message</string>
+    <string name="input_pub_topic">Input Topic For Publish</string>
+    <string name="button_pub">Publish</string>
+</resources>
