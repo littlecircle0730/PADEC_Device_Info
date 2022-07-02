@@ -11,7 +11,7 @@
     <string name="input_password">Input Password</string>
     <string name="button_connect">Connect</string>
 
-    <!-- Strings used for fragments for Sub/Pub -->
+    <!-- Strings used for Sub/Pub -->
     <string name="sub_topic">Topic</string>
     <string name="input_sub_topic">Input Topic For Subscription</string>
     <string name="button_sub">Subscribe</string>
@@ -21,4 +21,7 @@
     <string name="input_message">Input Message</string>
     <string name="input_pub_topic">Input Topic For Publish</string>
     <string name="button_pub">Publish</string>
+
+    <!-- Strings used for device info-->
+    <string name="button_device_info">Get Device Info</string>
 </resources>

@@ -124,6 +124,16 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:text="@string/button_pub" />
+
+        <Button
+            android:id="@+id/button_device_info"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="@string/button_device_info" />
+        <TextView
+            android:id="@+id/text_device_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
 </ScrollView>
