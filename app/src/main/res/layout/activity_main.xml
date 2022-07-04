@@ -23,44 +23,44 @@
             android:layout_height="wrap_content"
             android:text="@string/input_uri"/>
 
-        <TextView
-            android:id="@+id/client_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/client_id"
-            android:textSize="25sp"/>
+<!--        <TextView-->
+<!--            android:id="@+id/client_id"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/client_id"-->
+<!--            android:textSize="25sp"/>-->
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_client_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/input_client_id"/>
+<!--        <com.google.android.material.textfield.TextInputEditText-->
+<!--            android:id="@+id/input_client_id"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/input_client_id"/>-->
 
-        <TextView
-            android:id="@+id/user_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/user_name"
-            android:textSize="25sp"/>
+<!--        <TextView-->
+<!--            android:id="@+id/user_name"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/user_name"-->
+<!--            android:textSize="25sp"/>-->
 
-        <EditText
-            android:id="@+id/input_user_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/input_user_name"/>
+<!--        <EditText-->
+<!--            android:id="@+id/input_user_name"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/input_user_name"/>-->
 
-        <TextView
-            android:id="@+id/password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/password"
-            android:textSize="25sp"/>
+<!--        <TextView-->
+<!--            android:id="@+id/password"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/password"-->
+<!--            android:textSize="25sp"/>-->
 
-        <EditText
-            android:id="@+id/input_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/input_password"/>
+<!--        <EditText-->
+<!--            android:id="@+id/input_password"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/input_password"/>-->
 
         <Button
             android:id="@+id/button_connect"
@@ -93,43 +93,62 @@
             android:layout_width="match_parent"
             android:text="@string/button_unsub" />
 
+<!--        <TextView-->
+<!--            android:id="@+id/pub_topic"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/pub_topic"-->
+<!--            android:textSize="25sp"/>-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/input_pub_topic"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/input_pub_topic"/>-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/message"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/message"-->
+<!--            android:textSize="25sp"/>-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/input_message"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/input_message"/>-->
+
+<!--        <Button-->
+<!--            android:id="@+id/button_pub"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:text="@string/button_pub" />-->
+
         <TextView
-            android:id="@+id/pub_topic"
+            android:id="@+id/text_req"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pub_topic"
+            android:text="@string/text_req"
             android:textSize="25sp"/>
-
-        <EditText
-            android:id="@+id/input_pub_topic"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/input_pub_topic"/>
-
-        <TextView
-            android:id="@+id/message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/message"
-            android:textSize="25sp"/>
-
-        <EditText
-            android:id="@+id/input_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/input_message"/>
-
         <Button
-            android:id="@+id/button_pub"
+            android:id="@+id/button_req"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="@string/button_pub" />
+            android:text="@string/button_req" />
 
+        <TextView
+            android:id="@+id/text_show_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_show_info"
+            android:textSize="25sp"/>
         <Button
             android:id="@+id/button_device_info"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:text="@string/button_device_info" />
+
         <TextView
             android:id="@+id/text_device_info"
             android:layout_width="match_parent"

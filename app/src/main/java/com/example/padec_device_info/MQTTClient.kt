@@ -3,7 +3,6 @@ package com.example.padec_device_info
 import android.content.Context
 import android.util.Log
 import info.mqtt.android.service.Ack
-//import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import org.eclipse.paho.client.mqttv3.MqttClient
 import info.mqtt.android.service.MqttAndroidClient
@@ -14,7 +13,6 @@ class MQTTClient(context: Context,
                  clientID: String = "") {
     var clientId = MqttClient.generateClientId()
     private var mqttClient = MqttAndroidClient(context, serverURI, clientId, Ack.AUTO_ACK)
-//    private var mqttClient = MqttAndroidClient(context, "tcp://192.168.0.141:8888", clientId, Ack.AUTO_ACK)
 
     fun connect(username:   String               = "",
                 password:   String               = "",

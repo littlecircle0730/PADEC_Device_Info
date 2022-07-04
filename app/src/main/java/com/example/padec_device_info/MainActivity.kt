@@ -12,6 +12,7 @@ import android.content.Intent
 import android.app.ActivityManager
 import android.os.*
 import java.util.*
+import kotlin.random.Random.Default.nextInt
 
 class MainActivity : AppCompatActivity() {
     private val mPADECService: PADECService = PADECService()
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         lateinit var btn_sub: Button
         lateinit var btn_unsub: Button
         lateinit var btn_pub: Button
+        lateinit var button_req: Button
         // device info
         lateinit var btn_device_info: Button
         lateinit var text_device_info: TextView
@@ -43,28 +45,29 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         input_uri = findViewById(R.id.input_uri)
-        input_client_id = findViewById(R.id.input_client_id)
-        input_user_name = findViewById(R.id.input_user_name)
-        input_password = findViewById(R.id.input_password)
+        //input_client_id = findViewById(R.id.input_client_id)
+        //input_user_name = findViewById(R.id.input_user_name)
+        //input_password = findViewById(R.id.input_password)
         btn_connect = findViewById(R.id.button_connect)
 
         input_sub_topic = findViewById(R.id.input_sub_topic)
-        input_pub_topic = findViewById(R.id.input_pub_topic)
-        input_message = findViewById(R.id.input_message)
+        //input_pub_topic = findViewById(R.id.input_pub_topic)
+        //input_message = findViewById(R.id.input_message)
         btn_sub = findViewById(R.id.button_sub)
         btn_unsub = findViewById(R.id.button_unsub)
-        btn_pub = findViewById(R.id.button_pub)
+        //btn_pub = findViewById(R.id.button_pub)
+        button_req = findViewById(R.id.button_req)
 
         btn_device_info = findViewById(R.id.button_device_info)
         text_device_info = findViewById(R.id.text_device_info)
 
         btn_connect.setOnClickListener{
             mqttClient= MQTTClient(this@MainActivity, "" +input_uri.text,
-                "" +input_client_id.text
+                ""
             )
             mqttClient.connect(
-                "" +input_user_name.text,
-                "" +input_password.text,
+                "",
+                "",
                 object : IMqttActionListener {
                     override fun onSuccess(asyncActionToken: IMqttToken?) {
                         Log.d(this.javaClass.name, "Connection success")
@@ -83,8 +86,35 @@ class MainActivity : AppCompatActivity() {
                     override fun messageArrived(topic: String?, message: MqttMessage?) {
                         val msg = "Receive message: ${message.toString()} from topic: $topic"
                         Log.d(this.javaClass.name, msg)
-
                         Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+
+                        val returnPrivateTopic="PADEC"+message
+
+                        // Handle receive message
+                        if (topic=="PadecRequest"){
+                            // send device info back
+                            val returnMessage=getDeviceInfo()
+                            mqttClient.publish(
+                                returnPrivateTopic,
+                                returnMessage,
+                                1,
+                                false,
+                                object : IMqttActionListener {
+                                    override fun onSuccess(asyncActionToken: IMqttToken?) {
+                                        val msg ="Publish message: $message to topic: $topic"
+                                        Log.d(this.javaClass.name, msg)
+
+                                        Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+                                    }
+
+                                    override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                                        Log.d(this.javaClass.name, "Failed to publish message to topic")
+                                    }
+                                })
+                        } else{
+                            // show receviced device info
+                            text_device_info.setText(message.toString())
+                        }
                     }
 
                     override fun connectionLost(cause: Throwable?) {
@@ -97,9 +127,33 @@ class MainActivity : AppCompatActivity() {
                 })
         }
 
-        btn_pub.setOnClickListener{
-            var topic = ""+input_sub_topic.text
-            var message = ""+input_message.text
+//        btn_pub.setOnClickListener{
+//            var topic = ""+input_sub_topic.text
+//            var message = ""+input_message.text
+//            mqttClient.publish(
+//                topic,
+//                message,
+//                1,
+//                false,
+//                object : IMqttActionListener {
+//                    override fun onSuccess(asyncActionToken: IMqttToken?) {
+//                        val msg ="Publish message: $message to topic: $topic"
+//                        Log.d(this.javaClass.name, msg)
+//
+//                        Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+//                    }
+//
+//                    override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+//                        Log.d(this.javaClass.name, "Failed to publish message to topic")
+//                    }
+//                })
+//        }
+
+        // Request device info through the topic "PadecRequest"
+        button_req.setOnClickListener{
+            val topic = "PadecRequest"
+            val message = nextInt(Math.pow(10.0, 10.0).toInt()).toString() //create a number as id to get private topic
+            val privateTopic = "PADEC"+message
             mqttClient.publish(
                 topic,
                 message,
@@ -115,6 +169,22 @@ class MainActivity : AppCompatActivity() {
 
                     override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
                         Log.d(this.javaClass.name, "Failed to publish message to topic")
+                    }
+                })
+            // sub private topic
+            mqttClient.subscribe(
+                privateTopic,
+                1,
+                object : IMqttActionListener {
+                    override fun onSuccess(asyncActionToken: IMqttToken?) {
+                        val msg = "Subscribed to privateTopic: $privateTopic"
+                        Log.d(this.javaClass.name, msg)
+
+                        Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                        Log.d(this.javaClass.name, "Failed to subscribe: $privateTopic")
                     }
                 })
         }
@@ -160,15 +230,18 @@ class MainActivity : AppCompatActivity() {
         startService(intent)
 
         btn_device_info.setOnClickListener{
-            System.out.println("### Here "+mPADECService.getStorageInfo())
-            val mBatteryManager:BatteryManager = this.getSystemService(BATTERY_SERVICE) as BatteryManager
-            val activityManager = this.getSystemService(ACTIVITY_SERVICE) as ActivityManager
-            var info = "Model Info:\n" + mPADECService.getModelInfo() + "\n\n"
-            info+="Power Info:\n" + mPADECService.getPowerInfo(this.intent,mBatteryManager) + "\n\n"
-            info+="Storage Info:\n" + mPADECService.getStorageInfo() + "\n\n"
-            info+="RAM Info:\n" + mPADECService.getRAMInfo(activityManager) + "\n\n"
-            info+="CPU Info:\n" + mPADECService.getCPUInfo() + "\n\n"
-            text_device_info.setText(info)
+            text_device_info.text = getDeviceInfo()
         }
+    }
+
+    fun getDeviceInfo(): String {
+        val mBatteryManager:BatteryManager = this.getSystemService(BATTERY_SERVICE) as BatteryManager
+        val activityManager = this.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        var info = "Model Info:\n" + mPADECService.getModelInfo() + "\n\n"
+        info+="Power Info:\n" + mPADECService.getPowerInfo(this.intent,mBatteryManager) + "\n\n"
+        info+="Storage Info:\n" + mPADECService.getStorageInfo() + "\n\n"
+        info+="RAM Info:\n" + mPADECService.getRAMInfo(activityManager) + "\n\n"
+        info+="CPU Info:\n" + mPADECService.getCPUInfo() + "\n\n"
+        return info
     }
 }

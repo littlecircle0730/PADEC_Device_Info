@@ -22,6 +22,9 @@
     <string name="input_pub_topic">Input Topic For Publish</string>
     <string name="button_pub">Publish</string>
 
-    <!-- Strings used for device info-->
-    <string name="button_device_info">Get Device Info</string>
+    <!-- Strings used for Device info -->
+    <string name="text_req">Press to request device Info</string>
+    <string name="button_req">Request Device Info</string>
+    <string name="text_show_info">Show my device info</string>
+    <string name="button_device_info">Show Device Info</string>
 </resources>

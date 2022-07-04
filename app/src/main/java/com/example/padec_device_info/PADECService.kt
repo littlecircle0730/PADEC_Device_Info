@@ -19,7 +19,6 @@ class PADECService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-//        startBlendSchedule()
         super.onStartCommand(intent, flags, startId)
         return START_STICKY
     }
