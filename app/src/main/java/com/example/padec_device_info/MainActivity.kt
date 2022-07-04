@@ -1,34 +1,20 @@
 package com.example.padec_device_info
 
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import android.view.Menu
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.example.padec_device_info.databinding.ActivityMainBinding
 import org.eclipse.paho.client.mqttv3.*
-import android.os.StatFs
-import java.text.DecimalFormat
-import android.os.BatteryManager
 
 import android.content.Intent
 import android.app.ActivityManager
-import android.content.Context
-import android.content.pm.ConfigurationInfo
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileReader
-import java.io.IOException
-import java.lang.Exception
-import java.lang.StringBuilder
+import android.os.*
 import java.util.*
 
-
 class MainActivity : AppCompatActivity() {
+    private val mPADECService: PADECService = PADECService()
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var mqttClient: MQTTClient
@@ -170,130 +156,19 @@ class MainActivity : AppCompatActivity() {
                 })
         }
 
+        val intent = Intent(this@MainActivity, PADECService::class.java)
+        startService(intent)
+
         btn_device_info.setOnClickListener{
-            val activityManager = this.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            var info = "Model Info:\n" + getModelInfo() + "\n\n"
-            info+="Power Info:\n" + getPowerInfo(this.intent) + "\n\n"
-            info+="Storage Info:\n" + getStorageInfo() + "\n\n"
-            info+="RAM Info:\n" + getRAMInfo(activityManager) + "\n\n"
-            info+="CPU Info:\n" + getCPUInfo() + "\n\n"
+            System.out.println("### Here "+mPADECService.getStorageInfo())
+            val mBatteryManager:BatteryManager = this.getSystemService(BATTERY_SERVICE) as BatteryManager
+            val activityManager = this.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+            var info = "Model Info:\n" + mPADECService.getModelInfo() + "\n\n"
+            info+="Power Info:\n" + mPADECService.getPowerInfo(this.intent,mBatteryManager) + "\n\n"
+            info+="Storage Info:\n" + mPADECService.getStorageInfo() + "\n\n"
+            info+="RAM Info:\n" + mPADECService.getRAMInfo(activityManager) + "\n\n"
+            info+="CPU Info:\n" + mPADECService.getCPUInfo() + "\n\n"
             text_device_info.setText(info)
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    // Device Info ---
-    fun getStorageInfo(): String? {
-        var availableSpace = -1L
-        val stat = StatFs(Environment.getExternalStorageDirectory().getPath())
-        availableSpace =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) stat.blockSizeLong * stat.availableBlocksLong else stat.availableBlocks
-                .toLong() * stat.blockSize.toLong()
-        if (availableSpace <= 0) return "0"
-        val units = arrayOf("B", "kB", "MB", "GB", "TB")
-        val digitGroups = (Math.log10(availableSpace.toDouble()) / Math.log10(1024.0)).toInt()
-        return String.format(
-            "Available Storage Space %s\n",
-            DecimalFormat("#,##0.#").format(
-                availableSpace / Math.pow(
-                    1024.0,
-                    digitGroups.toDouble()
-                )
-            ).toString() + " " + units[digitGroups]
-        )
-    }
-
-    fun getPowerInfo(batteryStatus: Intent): String? {
-        val mBatteryManager:BatteryManager = this.getSystemService(BATTERY_SERVICE) as BatteryManager
-
-        val status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
-        val isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
-                status == BatteryManager.BATTERY_STATUS_FULL
-
-        // How are we charging?
-        val chargePlug = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
-        val usbCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_USB
-        val acCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_AC
-
-        // //Determine the current battery capacity
-        var batteryCapacity=0
-        //BATTERY_PROPERTY_CHARGE_COUNTER: Battery capacity in microampere-hours, as an integer.
-        // BATTERY_PROPERTY_CAPACITY: the remaining battery capacity as an integer percentage.
-        val chargeCounter: Int = mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
-        val capacity = mBatteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-        if(chargeCounter == Integer.MIN_VALUE || capacity == Integer.MIN_VALUE) batteryCapacity=0;
-        else batteryCapacity=(chargeCounter/1000/capacity*100)
-        return String.format(
-            " Is Charging: %s\n Charging by: %s\n Current Battery: %s%%\n Battery Capacity: %s mAh",
-            isCharging,
-            if (isCharging) if (usbCharge) "USB" else "AC Power" else "NOT Charging",
-            capacity,
-            batteryCapacity
-        )
-    }
-
-    fun getRAMInfo(actManager: ActivityManager): String? {
-        // Declaring MemoryInfo object
-        val memoryInfo = ActivityManager.MemoryInfo()
-
-        // Fetching the data from the ActivityManager
-        actManager.getMemoryInfo(memoryInfo)
-
-        // Fetching the available and total memory and converting into Giga Bytes
-        val availMemory =
-            java.lang.Double.valueOf(memoryInfo.availMem.toDouble()) / (1024 * 1024 * 1024)
-        val totalMemory =
-            java.lang.Double.valueOf(memoryInfo.totalMem.toDouble()) / (1024 * 1024 * 1024)
-        return String.format("Available RAM: %s\nTotal RAM: %s\n", availMemory, totalMemory)
-    }
-
-    fun getCPUInfo(): String? {
-        val sb = StringBuffer()
-        sb.append("abi: ").append(Build.CPU_ABI).append("\n")
-        if (File("/proc/cpuinfo").exists()) {
-            try {
-                val file = File("/proc/cpuinfo")
-                file.bufferedReader().forEachLine {
-                    var aLine: String
-                    sb.append(
-                        """
-                    $it
-
-                    """.trimIndent()
-                    )
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-        return sb.toString()
-    }
-
-    fun getModelInfo(): String? {
-        val manufacturer = Build.MANUFACTURER
-        val model = Build.MODEL
-        return if (model.lowercase(Locale.getDefault()).startsWith(manufacturer.lowercase(Locale.getDefault()))) {
-            capitalize(model)
-        } else {
-            capitalize(manufacturer).toString() + " " + model
-        }
-    }
-    // Device Info ---
-
-    private fun capitalize(s: String?): String? {
-        if (s == null || s.length == 0) {
-            return ""
-        }
-        val first = s[0]
-        return if (Character.isUpperCase(first)) {
-            s
-        } else {
-            Character.toUpperCase(first).toString() + s.substring(1)
         }
     }
 }
