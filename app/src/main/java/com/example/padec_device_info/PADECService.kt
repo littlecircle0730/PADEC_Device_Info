@@ -8,6 +8,9 @@ import java.io.File
 import java.io.IOException
 import java.text.DecimalFormat
 import java.util.*
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Context
 
 class PADECService : Service() {
     override fun onBind(intent: Intent): IBinder? {
@@ -36,6 +39,13 @@ class PADECService : Service() {
         } else {
             capitalize(manufacturer).toString() + " " + model
         }
+    }
+
+    fun getDeviceName(context:Context): String? {
+        val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        var myDevice: BluetoothAdapter = bluetoothManager.getAdapter()
+        val deviceName: String = myDevice.getName()
+        return deviceName
     }
 
     private fun capitalize(s: String?): String? {

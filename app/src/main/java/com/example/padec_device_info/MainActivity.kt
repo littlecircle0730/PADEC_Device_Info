@@ -1,5 +1,6 @@
 package com.example.padec_device_info
 
+import android.Manifest
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
@@ -10,7 +11,9 @@ import org.eclipse.paho.client.mqttv3.*
 
 import android.content.Intent
 import android.app.ActivityManager
+import android.bluetooth.BluetoothAdapter
 import android.os.*
+import androidx.activity.result.contract.ActivityResultContracts
 import java.util.*
 import kotlin.random.Random.Default.nextInt
 
@@ -60,6 +63,16 @@ class MainActivity : AppCompatActivity() {
 
         btn_device_info = findViewById(R.id.button_device_info)
         text_device_info = findViewById(R.id.text_device_info)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestMultiplePermissions.launch(arrayOf(
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT))
+        }
+        else{
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            requestBluetooth.launch(enableBtIntent)
+        }
 
         btn_connect.setOnClickListener{
             mqttClient= MQTTClient(this@MainActivity, "" +input_uri.text,
@@ -237,11 +250,27 @@ class MainActivity : AppCompatActivity() {
     fun getDeviceInfo(): String {
         val mBatteryManager:BatteryManager = this.getSystemService(BATTERY_SERVICE) as BatteryManager
         val activityManager = this.getSystemService(ACTIVITY_SERVICE) as ActivityManager
-        var info = "Model Info:\n" + mPADECService.getModelInfo() + "\n\n"
+        var info = "Device Name:\n" + mPADECService.getDeviceName(this) + "\n\n"
+        info += "Model Info:\n" + mPADECService.getModelInfo() + "\n\n"
         info+="Power Info:\n" + mPADECService.getPowerInfo(this.intent,mBatteryManager) + "\n\n"
         info+="Storage Info:\n" + mPADECService.getStorageInfo() + "\n\n"
         info+="RAM Info:\n" + mPADECService.getRAMInfo(activityManager) + "\n\n"
         info+="CPU Info:\n" + mPADECService.getCPUInfo() + "\n\n"
         return info
     }
+
+    private var requestBluetooth = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            //granted
+        }else{
+            //deny
+        }
+    }
+
+    private val requestMultiplePermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            permissions.entries.forEach {
+                Log.d("test006", "${it.key} = ${it.value}")
+            }
+        }
 }

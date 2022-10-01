@@ -49,7 +49,7 @@ dependencies {
     //implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     implementation "androidx.room:room-runtime:2.4.2"
     //We use these instead
-    implementation files('/Users/LC/Downloads/serviceLibrary-release.aar')
+    implementation files('/Users/LC/PADEC_Device_Info/serviceLibrary-release.aar')
     kapt "androidx.room:room-compiler:2.4.2"
     implementation 'com.jakewharton.timber:timber:4.6.0'
 
