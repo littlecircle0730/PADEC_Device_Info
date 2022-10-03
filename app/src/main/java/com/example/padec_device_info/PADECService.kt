@@ -8,8 +8,6 @@ import java.io.File
 import java.io.IOException
 import java.text.DecimalFormat
 import java.util.*
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.provider.Settings
 import java.lang.Exception
