@@ -64,15 +64,15 @@ class MainActivity : AppCompatActivity() {
         btn_device_info = findViewById(R.id.button_device_info)
         text_device_info = findViewById(R.id.text_device_info)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            requestMultiplePermissions.launch(arrayOf(
-                Manifest.permission.BLUETOOTH_SCAN,
-                Manifest.permission.BLUETOOTH_CONNECT))
-        }
-        else{
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            requestBluetooth.launch(enableBtIntent)
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            requestMultiplePermissions.launch(arrayOf(
+//                Manifest.permission.BLUETOOTH_SCAN,
+//                Manifest.permission.BLUETOOTH_CONNECT))
+//        }
+//        else{
+//            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+//            requestBluetooth.launch(enableBtIntent)
+//        }
 
         btn_connect.setOnClickListener{
             mqttClient= MQTTClient(this@MainActivity, "" +input_uri.text,
@@ -139,28 +139,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
         }
-
-//        btn_pub.setOnClickListener{
-//            var topic = ""+input_sub_topic.text
-//            var message = ""+input_message.text
-//            mqttClient.publish(
-//                topic,
-//                message,
-//                1,
-//                false,
-//                object : IMqttActionListener {
-//                    override fun onSuccess(asyncActionToken: IMqttToken?) {
-//                        val msg ="Publish message: $message to topic: $topic"
-//                        Log.d(this.javaClass.name, msg)
-//
-//                        Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
-//                    }
-//
-//                    override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-//                        Log.d(this.javaClass.name, "Failed to publish message to topic")
-//                    }
-//                })
-//        }
 
         // Request device info through the topic "PadecRequest"
         button_req.setOnClickListener{
@@ -258,19 +236,4 @@ class MainActivity : AppCompatActivity() {
         info+="CPU Info:\n" + mPADECService.getCPUInfo() + "\n\n"
         return info
     }
-
-    private var requestBluetooth = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            //granted
-        }else{
-            //deny
-        }
-    }
-
-    private val requestMultiplePermissions =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            permissions.entries.forEach {
-                Log.d("test006", "${it.key} = ${it.value}")
-            }
-        }
 }

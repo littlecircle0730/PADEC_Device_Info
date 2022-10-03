@@ -11,6 +11,8 @@ import java.util.*
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import android.provider.Settings
+import java.lang.Exception
 
 class PADECService : Service() {
     override fun onBind(intent: Intent): IBinder? {
@@ -42,9 +44,12 @@ class PADECService : Service() {
     }
 
     fun getDeviceName(context:Context): String? {
-        val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        var myDevice: BluetoothAdapter = bluetoothManager.getAdapter()
-        val deviceName: String = myDevice.getName()
+        var deviceName: String = "No Permission to collect device name"
+        try {
+            deviceName = Settings.Secure.getString(context.getContentResolver(), "bluetooth_name");
+        } catch (e: Exception){
+            print("Exception for device name: " + deviceName)
+        }
         return deviceName
     }
 
