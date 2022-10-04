@@ -44,9 +44,10 @@ class PADECService : Service() {
     fun getDeviceName(context:Context): String? {
         var deviceName: String = "No Permission to collect device name"
         try {
-            deviceName = Settings.Secure.getString(context.getContentResolver(), "bluetooth_name");
+//            deviceName = Settings.Secure.getString(context.getContentResolver(), "bluetooth_name"); // work for API 31
+            deviceName = Settings.Global.getString(context.getContentResolver(), Settings.Global.DEVICE_NAME) // work for API 28
         } catch (e: Exception){
-            print("Exception for device name: " + deviceName)
+            println("Exception for device name: $e" )
         }
         return deviceName
     }
